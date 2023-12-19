@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.testreview;
+
 import java.util.Scanner;
 import java.io.File;
 import java.util.HashMap;
@@ -10,12 +7,15 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
 
+/**
+ * Class that contains helper methods for the Review Lab
+ **/
 public class Review {
-
+  
   private static HashMap<String, Double> sentiment = new HashMap<String, Double>();
   private static ArrayList<String> posAdjectives = new ArrayList<String>();
   private static ArrayList<String> negAdjectives = new ArrayList<String>();
-  
+ 
   
   private static final String SPACE = " ";
   
@@ -131,6 +131,7 @@ public class Review {
     
     return word;
   }
+  
   /** 
    * Randomly picks a positive adjective from the positiveAdjectives.txt file and returns it.
    */
@@ -162,44 +163,37 @@ public class Review {
       return randomNegativeAdj();
     }
   }
-  
-  //Write your totalSentiment method here. This method should return the total
-  //sentiment value of a review based on an input review
-  public static double totalSentiment(String fileName)
+
+  //Write your fakeReview method here. This method takes a .txt file and returns a new review
+  //String with the adjectives randomly changed
+  public static String fakeReview(String fileName)
   {
+    //Turns the file into a string
+    String transformer = textToString(fileName);
+    //Becomes the return string
+    String newString = "";
+      //newString += transformer.substring(0, transformer.indexOf("*"));
+    //Holds the new adjective to put into the newString
     String placeHolder = "";
-    double totalSentiment = 0.0;
-    String review = textToString(fileName);
-    //removes punctuation
-    review = review.replaceAll("\\p{Punct}", "");
-    for (int i = 0; i < review.length(); i++)
-    {
-      if (review.substring(i, i + 1).equals(" "))
-      {
-        totalSentiment += sentimentVal(placeHolder);
-        placeHolder = "";
+    //Makes the placeHolder string and takes away the words that we want changed
+    for(int k = 0; k < transformer.length(); k++){
+      if(transformer.substring(k, k + 1).equals("*")){
+        int startI = transformer.indexOf("*");
+        for(int i = transformer.indexOf("*"); i < transformer.length(); i++){
+          if(transformer.substring(i, i + 1).equals(" ")){
+            placeHolder = randomAdjective();
+            newString += placeHolder + " ";
+            placeHolder = "";
+            int endI = i;
+            transformer = transformer.replace(transformer.substring(startI, endI), "");
+            i = transformer.length();
+          }
+        }
       }
-      else
-      {
-        placeHolder += review.substring(i, i + 1);
+      else{
+        newString += transformer.substring(k , k + 1);
       }
     }
-    return totalSentiment;
-  }
-  
-  //Write your starRating method here. This method should return an int rating from 0-4 based on the total
-  //sentiment value of a review.
-  public static int starRating(String fileName)
-  {
-    int starRating = (int)totalSentiment(fileName);
-    if (starRating <= 0)
-    {
-      starRating = 0;
-    }
-    if (starRating >= 4)
-    {
-      starRating = 4;
-    }
-    return starRating;
+  return newString;
   }
 }
